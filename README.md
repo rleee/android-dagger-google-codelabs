@@ -215,6 +215,88 @@ as long as the activity lives, the component will also there
 annotation class ActivityScope
 ```
 
+---
+### Step 3
+One scope on multiple activities <br>
+Ex: One Repository for multiple activities (only available user logged in), but not global scope <br>
+
+- will create a subcomponent for the activity to be injected
+- annotate the repository & subcomponent with custom scope (only available when user logged in)
+- the creation of the subcomponent will be managed by UserManager
+- activity will get subcomponent from UserManager and ViewModel will be injected if user is logged in
+
+##### UserManager
+1. will get Factory from Subcomponent (declared in Module)
+2. will be null initially
+3. create it once logged in
+4. remove it once logout
+
+```kotlin
+@Singleton
+class UserManager
+@Inject constructor(
+    private val storage: Storage,
+    private val userComponentFactory: UserComponent.Factory // <-- (1)
+) {
+
+    var userComponent: UserComponent? = null // <-- (2)
+        private set
+
+    fun registerUser(username: String, password: String) {
+        storage.setString(REGISTERED_USER, username)
+        storage.setString("$username$PASSWORD_SUFFIX", password)
+        userJustLoggedIn() // <-- (3)
+    }
+
+    private fun userJustLoggedIn() {
+        userComponent = userComponentFactory.create() <-- (3)
+    }
+    
+    fun logout() {
+        userComponent = null // <-- (4)
+    }
+}
+```
+
+##### MainActivity
+1. Injection property
+2. get the UserManager first
+3. if user is logged in inflate view and inject ViewModel
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    @Inject // <-- (1)
+    lateinit var mainViewModel: MainViewModel
+
+    /**
+     * If the User is not registered, RegistrationActivity will be launched,
+     * If the User is not logged in, LoginActivity will be launched,
+     * else carry on with MainActivity
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val userManager = (application as MyApplication).appComponent.userManager() // <-- (2)
+        if (!userManager.isUserLoggedIn()) {
+            if (!userManager.isUserRegistered()) {
+                startActivity(Intent(this, RegistrationActivity::class.java))
+                finish()
+            } else {
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+        } else {
+            setContentView(R.layout.activity_main)
+            userManager.userComponent!!.inject(this) // <-- (3)
+            setupViews()
+        }
+    }
+    ...
+}
+```
+
+
 
 
 
