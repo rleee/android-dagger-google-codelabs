@@ -28,12 +28,16 @@ import javax.inject.Inject
 
 class RegistrationActivity : AppCompatActivity() {
 
+    lateinit var registrationComponent: RegistrationComponent
+
     @Inject
     lateinit var registrationViewModel: RegistrationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        (application as MyApplication).appComponent.injectTo(this)
+        registrationComponent =
+            (application as MyApplication).appComponent.registrationComponent().create()
+        registrationComponent.injectTo(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
