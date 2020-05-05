@@ -127,6 +127,93 @@ public final class DaggerAppComponent implements AppComponent {
 }
 ```
 
+---
+### Step 2
+Using:
+- Scope
+- Subcomponent
+
+Add scoping to the components, for Global Singleton we will use at `AppComponent` and `UserManager`, <br>
+so wherever we instantiate the component it will be its scope <br>
+> AppComponent instatiated at MyApplication, as long as MyApplication still there, the AppComponent instace will still the same
+
+will also scope ViewModel by **Activity scope**, but before that will need to refactor AppComponent to have **Subcomponents** <br>
+> AppComponent `<--` AppSubComponents `<--` RegistrationComponent
+
+Then to use Subcomponent and ActivityScope
+> registrationComponent property `<--` Activity `<--` MyApplication `<--` AppComponent `<--` RegistrationComponent
+
+##### RegistrationActivity
+As long as the Activity lives the ViewModel will live here in the Activity Scope
+```kotlin
+class RegistrationActivity : AppCompatActivity() {
+
+    lateinit var registrationComponent: RegistrationComponent
+
+    @Inject
+    lateinit var registrationViewModel: RegistrationViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        registrationComponent = (application as MyApplication).appComponent.registrationComponent().create() // <-- manually create here
+        registrationComponent.injectTo(this)
+
+        super.onCreate(savedInstanceState)
+        ...
+    }
+}
+```
+
+##### AppComponent
+```kotlin
+@Singleton // <-- Singleton Scope
+@Component(modules = [StorageModule::class, AppSubComponents::class]) // <-- Declare subcomponent
+interface AppComponent {
+
+    @Component.Factory
+    interface Factory {
+        fun create(@BindsInstance context: Context): AppComponent
+    }
+
+    fun registrationComponent(): RegistrationComponent.Factory // <-- RegistrationComponent
+
+    fun injectTo(activity: MainActivity)
+}
+```
+
+##### AppSubComponents
+```kotlin
+@Module(subcomponents = [RegistrationComponent::class]) // <-- can add more
+class AppSubComponents
+```
+
+##### RegistrationComponent
+```kotlin
+@ActivityScope // <-- declare the Scope
+@Subcomponent
+interface RegistrationComponent {
+
+    @Subcomponent.Factory
+    interface Factory {
+        fun create(): RegistrationComponent
+    }
+
+    fun injectTo(activity: RegistrationActivity)
+    fun injectTo(fragment: EnterDetailsFragment)
+    fun injectTo(fragment: TermsAndConditionsFragment)
+}
+```
+
+##### ActivityScope
+This scope is just a maker as long as the component mark as this scope still available in memory it wont be re-created <br>
+in this case Subcomponent mark with this and is instantiated in Activity <br>
+as long as the activity lives, the component will also there
+```kotlin
+@Scope
+@MustBeDocumented
+@Retention(value = AnnotationRetention.RUNTIME)
+annotation class ActivityScope
+```
 
 
 
