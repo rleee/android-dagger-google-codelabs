@@ -1,59 +1,137 @@
-# Using Dagger in your Android app
+# Dagger with google-codelabs
+App structure
+- Ui
+  - Registration + ViewModel
+    - Enter Details + ViewModel
+    - Terms and conditions
+  - Main + ViewModel
+  - Login + ViewModel
+  - Settings + ViewModel
+- User
+  - UserManager
+  - UserRepository
+- Storage
+  - SharedPreferences
+  
+---
+  
+### Step 1
+Using:
+- @Component
+  - @Component.Factory
+  - @BindsInstance
+- @Module
+  - @Binds
+- @Inject
 
-This folder contains the source code for the "Using Dagger in your Android app" codelab.
-
-The codelab is built in multiple GitHub branches:
-* `master` is the codelab's starting point.
-* `1_registration_main`, `2_subcomponents`, and `3_dagger_app` are intermediate
-steps towards the solution.
-* `solution` contains the solution to this codelab.
-
-
-# Introduction
-Dependency injection is a technique widely used in programming and well suited
-to Android development. By following the principles of dependency injection, you
-lay the groundwork for a good app architecture.
-
-Implementing dependency injection provides you with the following advantages:
-* Reusability of code.
-* Ease of refactoring.
-* Ease of testing.
-
-
-# Pre-requisites
-* Experience with Kotlin syntax.
-* You understand Dependency Injection and know what the benefits
-of using Dagger in your Android app are.
-
-# Getting Started
-1. Install Android Studio, if you don't already have it.
-2. Download the sample.
-3. Import the sample into Android Studio.
-4. Build and run the sample.
+Start with Registration, the general `@Inject` flow will be like (except context wont need Inject):
+> registration property `<--` registrationViewModel `<--` userManager `<--` sharedPreferences `<--` context
 
 
-# Comparison between different branches
-* Step 1 - `master` to `1_registration_main` ([Comparison](https://github.com/googlecodelabs/android-dagger/compare/master...1_registration_main))
-* Step 2 - `1_registration_main` to `2_subcomponents` ([Comparison](https://github.com/googlecodelabs/android-dagger/compare/1_registration_main...2_subcomponents))
-* Step 3 - `2_subcomponents` to `3_dagger_app` ([Comparison](https://github.com/googlecodelabs/android-dagger/compare/2_subcomponents...3_dagger_app))
-* Step 4 - `3_dagger_app` to `solution` ([Comparison](https://github.com/googlecodelabs/android-dagger/compare/3_dagger_app...solution))
-* [Full codelab comparison](https://github.com/googlecodelabs/android-dagger/compare/master...solution)
+By Dagger we will need to provide Component, Module, and Inject annotation
+> [registration property](#registration-activity) `<--` [MyApplication](#myapplication) `<--` [AppComponent + context](#appcomponent) `<--` [StorageModule](#storagemodule) `<--` [sharedPreferences](#sharedpreferences)
 
+##### Registration Activity
+```kotlin 
+class RegistrationActivity : AppCompatActivity() {
 
-# License
+    @Inject // <-- Injecting
+    lateinit var registrationViewModel: RegistrationViewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        (application as MyApplication).appComponent.injectTo(this) // <-- MyApplication as the base applicatipn class declared in AndroidManifest
+        ...
+    }
+    ...
+}
 ```
-Copyright 2019 Google LLC
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+##### MyApplication
+a global application base class to hold the global dependency (by app)
+```kotlin
+open class MyApplication : Application() {
 
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+    val appComponent: AppComponent by lazy {
+        DaggerAppComponent.factory().create(applicationContext) // <-- using Component.Factory to instantiate AppComponent because we need a parameter, in this case context
+    }
+}
 ```
+
+##### AppComponent
+Will use `@Component.Factory` to instantiate AppComponent to receive parameters, because one of the dependecy (sharedPreferences) need context property <br>
+We will need @BindsIntance for the context, so inside dagger this variable can be used for sharedPreferences / dependency that need it
+```kotlin
+@Component(modules = [StorageModule::class])
+interface AppComponent {
+
+    @Component.Factory
+    interface Factory {
+        fun create(@BindsInstance context: Context): AppComponent // <-- Instantiate AppComponent using Factory to receive parameters
+    }
+
+    fun injectTo(activity: RegistrationActivity)
+}
+```
+
+##### StorageModule
+```kotlin
+@Module
+abstract class StorageModule {
+    @Binds
+    abstract fun bindsStorage(storage: SharedPreferencesStorage): Storage
+}
+```
+
+##### SharedPreferences
+See here we need context as parameter, thats why we need to pass context in AppComponent above for this use
+```kotlin
+class SharedPreferencesStorage
+@Inject constructor(context: Context) : Storage {
+
+    private val sharedPreferences = context.getSharedPreferences("Dagger", Context.MODE_PRIVATE)
+    ...
+}
+```
+
+##### dagger generated AppComponent
+Checkout below code:
+1. @BindsInstance will create a property
+2. Factory will receive the parameter and pass to above 'context'
+3. SharedPreferences will use the context
+
+```java
+public final class DaggerAppComponent implements AppComponent {
+  private final Context context; // (1)
+
+  private DaggerAppComponent(Context contextParam) {
+    this.context = contextParam;
+  }
+
+  public static AppComponent.Factory factory() {
+    return new Factory();
+  }
+
+  private SharedPreferencesStorage getSharedPreferencesStorage() {
+    return new SharedPreferencesStorage(context);} // (3)
+
+  ...
+
+  private static final class Factory implements AppComponent.Factory {
+    @Override
+    public AppComponent create(Context context) { // (2)
+      Preconditions.checkNotNull(context);
+      return new DaggerAppComponent(context);
+    }
+  }
+}
+```
+
+
+
+
+
+
+
+
+
