@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.settings
+package com.example.android.dagger.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
@@ -22,7 +22,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.android.dagger.MyApplication
 import com.example.android.dagger.R
-import com.example.android.dagger.login.LoginActivity
+import com.example.android.dagger.ui.login.LoginActivity
 
 class SettingsActivity : AppCompatActivity() {
 

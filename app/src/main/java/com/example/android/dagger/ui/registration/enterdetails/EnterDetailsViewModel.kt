@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.registration.enterdetails
+package com.example.android.dagger.ui.registration.enterdetails
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.registration
+package com.example.android.dagger.ui.registration
 
 import com.example.android.dagger.user.UserManager
 import org.junit.Before

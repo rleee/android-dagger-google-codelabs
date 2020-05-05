@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.registration.termsandconditions
+package com.example.android.dagger.ui.registration.termsandconditions
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,8 +23,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.android.dagger.R
-import com.example.android.dagger.registration.RegistrationActivity
-import com.example.android.dagger.registration.RegistrationViewModel
+import com.example.android.dagger.ui.registration.RegistrationActivity
+import com.example.android.dagger.ui.registration.RegistrationViewModel
 
 class TermsAndConditionsFragment : Fragment() {
 

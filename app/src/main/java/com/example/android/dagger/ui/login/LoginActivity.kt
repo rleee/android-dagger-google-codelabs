@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.login
+package com.example.android.dagger.ui.login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -25,10 +25,10 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
-import com.example.android.dagger.main.MainActivity
+import com.example.android.dagger.ui.main.MainActivity
 import com.example.android.dagger.MyApplication
 import com.example.android.dagger.R
-import com.example.android.dagger.registration.RegistrationActivity
+import com.example.android.dagger.ui.registration.RegistrationActivity
 
 class LoginActivity : AppCompatActivity() {
 

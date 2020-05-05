@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.main
+package com.example.android.dagger.ui.settings
 
 import com.example.android.dagger.user.UserDataRepository
+import com.example.android.dagger.user.UserManager
 
 /**
- * MainViewModel is the ViewModel that [MainActivity] uses to
- * obtain information of what to show on the screen.
+ * SettingsViewModel is the ViewModel that [SettingsActivity] uses to handle complex logic.
  */
-class MainViewModel(private val userDataRepository: UserDataRepository) {
+class SettingsViewModel(
+    private val userDataRepository: UserDataRepository,
+    private val userManager: UserManager
+) {
 
-    val welcomeText: String
-        get() = "Hello ${userDataRepository.username}!"
+    fun refreshNotifications() {
+        userDataRepository.refreshUnreadNotifications()
+    }
 
-    val notificationsText: String
-        get() = "You have ${userDataRepository.unreadNotifications} unread notifications"
+    fun logout() {
+        userManager.logout()
+    }
 }

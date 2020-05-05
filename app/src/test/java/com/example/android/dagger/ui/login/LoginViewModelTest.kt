@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.login
+package com.example.android.dagger.ui.login
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.android.dagger.LiveDataTestUtil

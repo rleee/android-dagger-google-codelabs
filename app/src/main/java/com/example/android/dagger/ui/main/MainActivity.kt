@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.main
+package com.example.android.dagger.ui.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -23,9 +23,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.android.dagger.MyApplication
 import com.example.android.dagger.R
-import com.example.android.dagger.login.LoginActivity
-import com.example.android.dagger.registration.RegistrationActivity
-import com.example.android.dagger.settings.SettingsActivity
+import com.example.android.dagger.ui.login.LoginActivity
+import com.example.android.dagger.ui.registration.RegistrationActivity
+import com.example.android.dagger.ui.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 

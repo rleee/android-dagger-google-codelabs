@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger.registration.enterdetails
+package com.example.android.dagger.ui.registration.enterdetails
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,8 +27,8 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.android.dagger.R
-import com.example.android.dagger.registration.RegistrationActivity
-import com.example.android.dagger.registration.RegistrationViewModel
+import com.example.android.dagger.ui.registration.RegistrationActivity
+import com.example.android.dagger.ui.registration.RegistrationViewModel
 
 class EnterDetailsFragment : Fragment() {
 
