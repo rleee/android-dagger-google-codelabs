@@ -1,6 +1,7 @@
 package com.example.android.dagger.di
 
 import android.content.Context
+import com.example.android.dagger.ui.main.MainActivity
 import com.example.android.dagger.ui.registration.RegistrationActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -14,4 +15,5 @@ interface AppComponent {
     }
 
     fun injectTo(activity: RegistrationActivity)
+    fun injectTo(activity: MainActivity)
 }
